@@ -20,7 +20,6 @@ class MainApp extends StatelessWidget {
   }
 }
 
-
 final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
@@ -30,7 +29,6 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/details/:id',
       builder: (context, state) {
-
         final id = int.parse(state.pathParameters['id']!);
         final affirmation = loaddata()[id];
         return AffirmationDetail(affirmation: affirmation);
@@ -83,18 +81,25 @@ class ScaffoldSample extends StatelessWidget {
   }
 }
 
-class AffirmationCard extends StatelessWidget {
+class AffirmationCard extends StatefulWidget {
   final Affirmation affirmation;
-  final int index; 
+  final int index;
 
   const AffirmationCard(this.affirmation, this.index, {super.key});
+
+  @override
+  State<AffirmationCard> createState() => _AffirmationCardState();
+}
+
+class _AffirmationCardState extends State<AffirmationCard> {
+  int likeCount = 0;
+  int dislikeCount = 0;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-
-        context.go('/details/$index');
+        context.go('/details/${widget.index}');
       },
       child: Card(
         elevation: 10,
@@ -108,7 +113,7 @@ class AffirmationCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset(
-              affirmation.image,
+              widget.affirmation.image,
               height: 194,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -116,9 +121,33 @@ class AffirmationCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                affirmation.desc,
+                widget.affirmation.desc,
                 style: const TextStyle(fontSize: 20),
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.thumb_up, color: Colors.green),
+                  onPressed: () {
+                    setState(() {
+                      likeCount++;
+                    });
+                  },
+                ),
+                Text('$likeCount'),
+                const SizedBox(width: 16),
+                IconButton(
+                  icon: const Icon(Icons.thumb_down, color: Colors.red),
+                  onPressed: () {
+                    setState(() {
+                      dislikeCount++;
+                    });
+                  },
+                ),
+                Text('$dislikeCount'),
+              ],
             ),
           ],
         ),
